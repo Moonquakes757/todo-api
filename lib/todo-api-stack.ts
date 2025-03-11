@@ -40,12 +40,13 @@ export class TodoApiStack extends cdk.Stack {
     // Define a usage plan and associate the API Key with the plan
     const plan = api.addUsagePlan('UsagePlan', {
       name: 'Easy',
-      apiKey,
       throttle: {
         rateLimit: 10,
         burstLimit: 2,
       },
     });
+
+    plan.addApiKey(apiKey);
     plan.addApiStage({
       stage: api.deploymentStage,
     });
