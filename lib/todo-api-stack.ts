@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 export class TodoApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -27,6 +28,12 @@ export class TodoApiStack extends cdk.Stack {
 
     // Granting read and write permissions to Lambda functions on DynamoDB tables
     table.grantReadWriteData(todoFunction);
+
+    // Add permission to call Amazon Translate for Lambda functions
+    todoFunction.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['translate:TranslateText'],
+      resources: ['*'],
+    }));
 
     // Create API Gateway REST API and integrate it with Lambda
     const api = new apigateway.RestApi(this, 'TodoApi', {
