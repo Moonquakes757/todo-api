@@ -66,13 +66,15 @@ exports.handler = async (event) => {
       const body = JSON.parse(event.body);
       const updateExpression = [];
       const expressionAttributeValues = {};
+      const expressionAttributeNames = {};
 
       if (body.description) {
         updateExpression.push('description = :desc');
         expressionAttributeValues[':desc'] = body.description;
       }
       if (body.status) {
-        updateExpression.push('status = :status');
+        updateExpression.push('#st = :status');
+        expressionAttributeNames['#st'] = 'status';
         expressionAttributeValues[':status'] = body.status;
       }
       if (body.priority) {
@@ -96,6 +98,7 @@ exports.handler = async (event) => {
         Key: { userId, todoId },
         UpdateExpression: 'set ' + updateExpression.join(', '),
         ExpressionAttributeValues: expressionAttributeValues,
+        ExpressionAttributeNames: Object.keys(expressionAttributeNames).length > 0 ? expressionAttributeNames : undefined,
         ReturnValues: 'ALL_NEW',
       };
 
