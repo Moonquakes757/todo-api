@@ -35,6 +35,12 @@ export class TodoApiStack extends cdk.Stack {
       resources: ['*'],
     }));
 
+    // Add permission to call Amazon Comprehend for automatic language detection
+    todoFunction.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['comprehend:DetectDominantLanguage'],
+      resources: ['*'],
+    }));
+
     // Create API Gateway REST API and integrate it with Lambda
     const api = new apigateway.RestApi(this, 'TodoApi', {
       restApiName: 'ToDo Service',
